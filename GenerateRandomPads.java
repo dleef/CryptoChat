@@ -23,6 +23,7 @@ import prime.Decryption;
 public class GenerateRandomPads {
 
 	private String filePath;
+	
 	/*
 	 * Copies encrypted character lines to file
 	 * @return the line that is copied to the Encrypted Pads text file
@@ -82,30 +83,32 @@ public class GenerateRandomPads {
 			}
 		}
 		
-		
 		//make ASCII table one string instead of list
 		//return result;
 		
 	}
 	
-	public static void printProgressBar(int count) {
+	public static void printProgressBar(double count, double limit) {
 		System.out.print("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
 		StringBuilder line = new StringBuilder("[");
 		int starCount = 0;
-		for(int i = 0; i < count/10; i++) {
+		
+		
+		for(int i = 0; i < count/(limit/10); i++) {
 			line.append("*");
 			starCount++;
 		}
 		for(int i = 0; i < 10 - starCount; i++) {
 			line.append(" ");
 		}
-		line.append("] " + count + "%");
+		line.append("] " + ((int)(count/(limit/100))+1) + "%");
 		System.out.print(line.toString());
 	}
 	
 	public GenerateRandomPads(String filePath){
 		this.filePath = filePath;
 	}
+	
 	
 	/*
 	 * This is the main 
@@ -120,33 +123,44 @@ public static void main (String[] args) throws Exception{
 		
 		// Set default file name if user doesn't pass it in
 		if(args.length == 0){
-			padGenerator = new GenerateRandomPads("EncryptedPads.txt");
+			padGenerator = new GenerateRandomPads("Pad.txt");
 			int padLines = 0;
 			int targetLines = 100;
 			// Generate 100 lines of the pad
 			while (padLines < targetLines){
+				System.out.print(" (" + (padLines) + "/" + (targetLines) + ") lines finished");
+				System.out.print("\r");
 				padGenerator.generatePads();
-				printProgressBar(padLines);
+				printProgressBar(padLines, targetLines);;
 				padLines++;
 			}
-			printProgressBar(targetLines);
+			System.out.print(" (" + (padLines) + "/" + (targetLines) + ") lines finished\r");
+			//printProgressBar(targetLines);
 			System.out.println();
 			System.out.println("Pad successfully created.");
 		
 		}
 		// Use argument for file name
 		else if(args.length == 1){
+			if(!args[0].endsWith(".txt")){
+				args[0] += ".txt";
+			}
 			padGenerator = new GenerateRandomPads(args[0]);
-			int padLines = 0;
+			
 			int targetLines = 100;
+			int padLines = 0;
+			
 			try{
 				// Generate 100 lines of the pad
 				while (padLines < targetLines){
+					System.out.print(" (" + (padLines) + "/" + (targetLines) + ") lines finished");
+					System.out.print("\r");
 					padGenerator.generatePads();
-					printProgressBar(padLines);
+					printProgressBar(padLines, targetLines);
 					padLines++;
 				}
-				printProgressBar(targetLines);
+				System.out.print(" (" + (padLines) + "/" + (targetLines) + ") lines finished\r");
+				//printProgressBar(padLines, targetLines);
 				System.out.println();
 				System.out.println("Pad successfully created.");
 			}
@@ -155,44 +169,54 @@ public static void main (String[] args) throws Exception{
 			}
 			
 		}
+		
+		else if(args.length == 2){
+			double optionalPadLength = Double.parseDouble(args[1]);
+			
+			if (optionalPadLength <= 100){
+				System.out.println("Error: pad must have at least 100 lines");
+				System.exit(0);
+			}
+			if (optionalPadLength >= 300){
+				System.out.println("Error: pad can not have more than 300 lines");
+				System.exit(0);
+			}
+			if(!args[0].endsWith(".txt")){
+				args[0] += ".txt";
+			}
+			padGenerator = new GenerateRandomPads(args[0]);
+			
+			
+			double targetLines = optionalPadLength;
+			double padLines = 0;
+			
+			try{
+				// Generate number of lines entered by user
+				while (padLines < targetLines){
+					
+					System.out.print(" (" + ((int)(padLines)) + "/" + (int)targetLines + ") lines finished\r");
+					System.out.print("\r");
+					padGenerator.generatePads();
+					printProgressBar(padLines, targetLines);
+					padLines++;
+					
+				}
+				System.out.print(" (" + ((int)(padLines)) + "/" + ((int)targetLines) + ") lines finished\r");
+				System.out.println();
+				System.out.println("Pad successfully created.");
+			}
+			catch(Exception e){
+				System.out.println(e);
+			}
+			
+			
+		} 
 		else{
 			System.out.println("You have not entered a correct file name");
 			System.exit(0);
 		}
 		
 		
-		
-		//continue;
-		}
-		/*
-		File file = new File("/Users/Danuzi/Documents/EncryptedPads.txt");
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		int lines = 0;
-		while (reader.readLine() != null){
-			lines++;
 		}
 		
-		PadEncryptor encryptPad = new PadEncryptor();
-		encryptPad.Encrypt();
-		
-		
-		//testing the encryptor
-		reader.close();
-		System.out.println("can only type " + lines + " characters");
-		Scanner put = new Scanner(System.in);
-		String UserInput1 = put.nextLine();
-		Encryption encrypt = new Encryption();
-		System.out.println("Encrypted message is " + encrypt.EncryptAlgorithm(UserInput1));
-		
-		//testing the decryptor
-		System.out.println("enter a message you need decrypted: ");
-		Scanner blah = new Scanner(System.in);
-		String input = blah.nextLine();
-		System.out.println("the length of the input is " + input.length());
-		Decryption decrypt = new Decryption();
-		System.out.println("decrypted message is " + decrypt.DecryptionAlgorithm(input));
-		
-	
-}
-*/
 }

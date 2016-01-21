@@ -5,20 +5,45 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class CryptoIntegration {
 	private String padPath;
 	
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
+		
+		String encrypt = "encrypt";
+		String decrypt = "decrypt";
+		File file = new File(args[0]);
 		CryptoIntegration crypto = new CryptoIntegration(args[0]);
+		
+		//System.out.println(args[0]);
 		if(!crypto.validPad()) {
 			System.out.println("Please enter a valid pad path");
 			System.exit(0);
 		}
-		/* else {
-			System.out.println("good file");
+		else if(crypto.validPad() == true){
+			String command = args[1];
+			
+			System.out.println("You can type " + (file.length())/96 + " characters");
+		if (command.equals(encrypt)){
+			
+			System.out.println("Enter the message you'd like encrypted: ");
+			Scanner in = new Scanner(System.in);
+			String userInput = in.nextLine();
+			String encryptedMessage = crypto.encrypt(userInput);
+			System.out.println("The encrypted message is: " + encryptedMessage);
+			System.exit(0);
 		}
-		*/
+		else if (command.equals(decrypt)){
+			System.out.println("Enter the message you'd like decrypted: ");
+			Scanner in = new Scanner(System.in);
+			String userInput = in.nextLine();
+			String decryptedMessage = crypto.decrypt(userInput);
+			System.out.println("The decrypted message is: " + decryptedMessage);
+			System.exit(0);
+		}
+		}
 	}
 	
 	public CryptoIntegration(String padPath) {
@@ -27,7 +52,8 @@ public class CryptoIntegration {
 	
 	
 	public boolean validPad(){
-		if(new File(padPath).length() == 9600) {
+		
+		if(new File(padPath).length() >= 9600) {
 			return true;
 		}
 		return false;
@@ -59,8 +85,7 @@ public class CryptoIntegration {
 			//finds location of encrypted letter in second line and uses same location
 			//in preceding line to decrypt
 			int charIndex = encryptedPads.get(i+1).lastIndexOf(lastChar);
-			
-			
+		
 			char character = (encryptedPads.get(i).charAt(charIndex));
 			output.append(Character.toString(character));
 		}
