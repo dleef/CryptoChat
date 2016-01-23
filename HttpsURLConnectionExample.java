@@ -65,6 +65,7 @@ public class HttpsURLConnectionExample {
 		//key needed to access the API
 		String key = "b05034f2afb0dac40562d2caffe491dd";
 		
+		
 		String url = "http://api.openweathermap.org/data/2.5/weather?q=" + blah.getRandomCity().replace(" ", "%20") + "&appid=" + key;
 		
 		
